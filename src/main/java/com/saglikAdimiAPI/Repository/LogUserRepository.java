@@ -23,7 +23,7 @@ import com.saglikAdimiAPI.Model.Person;
 public class LogUserRepository implements Logable<Patient> {
 
 	
-	private static final String CONNECTION_STRING = System.getenv("DATABASE_URL");
+	private static final String CONNECTION_STRING = "jdbc:postgresql://localhost:5433/SaglikAdimi_db?user=postgres&password=3519";
 
 	private Connection conn;
 	PasswordUtil passwordUtil = new PasswordUtil();
