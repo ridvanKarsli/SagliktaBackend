@@ -29,8 +29,7 @@ public class LogUserRepository implements Logable<Patient> {
 
 	// veri tabanı işlemleri
 	@Override
-	public ResponseEntity<String> login(Person person) {
-		System.out.print("url : "+ CONNECTION_STRING );
+	public ResponseEntity<String> login(Person person) {		
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 

@@ -112,6 +112,10 @@ public class CommentsRepository implements CommentsActionable {
 
 			// Sonuçları döngü ile okuyoruz
 			while (rs.next()) {
+	            if (!rs.next()) {
+	                // Eğer hiçbir sonuç bulunmazsa 404 Not Found dön
+	                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+	            }
 				Comments comment = new Comments();
 				comment.setCommnetsID(rs.getInt("commnetsID"));
 				comment.setMessage(rs.getString("message").trim());
@@ -130,6 +134,7 @@ public class CommentsRepository implements CommentsActionable {
 
 		} catch (SQLException e) {
 			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
 
 		return ResponseEntity.ok(commentList);

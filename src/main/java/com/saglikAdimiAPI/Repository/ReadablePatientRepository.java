@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 
@@ -87,6 +88,8 @@ public class ReadablePatientRepository implements ReadablePatient {
 					DiseaseRepository dr = new DiseaseRepository();
 					patient.setDiseases(dr.getDiseases(rs.getInt("userID"), token).getBody());
 
+				}else {
+					return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 				}
 				conn.close();
 				rs.close();

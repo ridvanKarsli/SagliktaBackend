@@ -60,39 +60,54 @@ public class DiseaseRepository implements DiseaseActionable<Patient> {
 
 	@Override
 	public ResponseEntity<List<Disease>> getDiseases(int userID, String token) {
-		// TODO Auto-generated method stub
+	    // Veritabanı bağlantısını oluştur
+	    getConnection();
 
-		getConnection();
+	    // SQL sorgusu
+	    String query = "SELECT * FROM public.\"Diseases\" WHERE \"userID\" = ?;";
+	    List<Disease> diseases = new ArrayList<>();
 
-		// SQL sorgusu
-		String query = "SELECT * FROM public.\"Diseases\" WHERE \"userID\" = ?;";
-		List<Disease> diseases = new ArrayList<>();
+	    try (PreparedStatement stmt = conn.prepareStatement(query)) {
+	        // Sorguya parametreyi ata
+	        stmt.setInt(1, userID);
 
-		try (PreparedStatement stmt = conn.prepareStatement(query)) {
-			// Sorguya parametreyi ata
-			stmt.setInt(1, userID);
+	        // Sorguyu çalıştır
+	        try (ResultSet rs = stmt.executeQuery()) {
+	            // Sonuçları işleme
+	            if (!rs.next()) {
+	                // Eğer hiçbir sonuç bulunmazsa 404 Not Found dön
+	                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+	            }
 
-			// Sorguyu çalıştır
-			try (ResultSet rs = stmt.executeQuery()) {
-				while (rs.next()) {
-					// DiseaseHistory nesnesini oluştur ve doldur
-					Disease disease = new Disease();
+	            do {
+	                // Disease nesnesini oluştur ve doldur
+	                Disease disease = new Disease();
 
-					disease.setDiseaseID(rs.getInt("diseaseID"));
-					disease.setDiseaseName(rs.getString("name").trim());
-					disease.setDateOfDiagnosis(rs.getDate("dateOfDiagnosis").toLocalDate());
-					disease.setUserID(rs.getInt("userID"));
+	                disease.setDiseaseID(rs.getInt("diseaseID"));
+	                disease.setDiseaseName(rs.getString("name").trim());
+	                disease.setDateOfDiagnosis(rs.getDate("dateOfDiagnosis").toLocalDate());
+	                disease.setUserID(rs.getInt("userID"));
 
-					// Listeye ekle
-					diseases.add(disease);
-				}
-				conn.close();
-				rs.close();
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return ResponseEntity.ok(diseases);
+	                // Listeye ekle
+	                diseases.add(disease);
+	            } while (rs.next());
+
+	            // Bağlantıyı kapat
+	            conn.close();
+	            rs.close();
+	        }
+	    } catch (SQLException e) {
+	        // SQL hatası durumunda 500 Internal Server Error dön
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+	    } catch (Exception e) {
+	        // Genel hata durumunda da 500 Internal Server Error dön
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+	    }
+
+	    // Veriler başarılı şekilde bulunduysa 200 OK dön
+	    return ResponseEntity.ok(diseases);
 	}
 
 	@Override
@@ -178,25 +193,18 @@ public class DiseaseRepository implements DiseaseActionable<Patient> {
 					disease.setDateOfDiagnosis(rs.getDate("dateOfDiagnosis").toLocalDate());
 					disease.setUserID(rs.getInt("userID"));
 
+				}else {
+					return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 				}
 				conn.close();
 				rs.close();
 			}
 		} catch (SQLException e) {
 			e.printStackTrace(); // Hata mesajını yazdır
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
 
 		return ResponseEntity.ok(disease);
-	}
-
-	private void getConnection() {
-		try {
-			conn = DriverManager.getConnection(CONNECTION_STRING);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
 	}
 
 	@Override
@@ -220,9 +228,20 @@ public class DiseaseRepository implements DiseaseActionable<Patient> {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace(); // Hata mesajını yazdır
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
 
 		return ResponseEntity.ok(diseaseNameList);
+	}
+	
+	private void getConnection() {
+		try {
+			conn = DriverManager.getConnection(CONNECTION_STRING);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 
 }

@@ -144,6 +144,10 @@ public class WorkAddressRepository implements WorkAddressActionable {
 			// Sorguyu çalıştır
 			try (ResultSet rs = stmt.executeQuery()) {
 				while (rs.next()) {
+		            if (!rs.next()) {
+		                // Eğer hiçbir sonuç bulunmazsa 404 Not Found dön
+		                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+		            }
 					// DiseaseHistory nesnesini oluştur ve doldur
 					Address address = new Address();
 
@@ -163,6 +167,7 @@ public class WorkAddressRepository implements WorkAddressActionable {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
 
 		return ResponseEntity.ok(addresses);
@@ -190,12 +195,15 @@ public class WorkAddressRepository implements WorkAddressActionable {
 					address.setCity(rs.getString("city").trim());
 					address.setDoctorID(rs.getInt("userID"));
 
+				}else {
+					return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 				}
 				conn.close();
 				rs.close();
 			}
 		} catch (SQLException e) {
 			e.printStackTrace(); // Hata mesajını yazdır
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
 
 		return ResponseEntity.ok(address);

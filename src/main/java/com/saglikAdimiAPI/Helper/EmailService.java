@@ -53,6 +53,12 @@ public class EmailService {
 		boolean isUsable = logUserRepository.emailUsable(email);
 		return isValidEmailFormat(email) && isEmailDomainValid(email) && isUsable;
 	}
+	
+	public boolean isEmailValidForContact(String email) {		
+		return isValidEmailFormat(email) && isEmailDomainValid(email);
+	}
+	
+
 
 	public boolean sendVerificationCode(String email) {
 		// Doğrulama kodu oluşturma

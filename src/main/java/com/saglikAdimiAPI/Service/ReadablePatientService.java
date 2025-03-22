@@ -29,5 +29,5 @@ public class ReadablePatientService implements ReadablePatient {
 		// TODO Auto-generated method stub
 		return readablePatientRepository.getPatient(userID, token);
 	}
-
+		
 }

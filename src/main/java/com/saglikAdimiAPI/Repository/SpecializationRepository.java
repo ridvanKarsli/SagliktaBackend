@@ -138,6 +138,10 @@ public class SpecializationRepository implements SpecializationActionable {
 
 			// Sorguyu çalıştır
 			try (ResultSet rs = stmt.executeQuery()) {
+	            if (!rs.next()) {
+	                // Eğer hiçbir sonuç bulunmazsa 404 Not Found dön
+	                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+	            }
 				while (rs.next()) {
 					// DiseaseHistory nesnesini oluştur ve doldur
 					Specialization specialization = new Specialization();
@@ -155,6 +159,7 @@ public class SpecializationRepository implements SpecializationActionable {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
 		return ResponseEntity.ok(specializationList);
 
@@ -178,12 +183,15 @@ public class SpecializationRepository implements SpecializationActionable {
 					specialization.setSpecializationExperience(rs.getInt("specializationExperience"));
 					specialization.setDoctorID(rs.getInt("userID"));
 
+				}else {
+					return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 				}
 				conn.close();
 				rs.close();
 			}
 		} catch (SQLException e) {
 			e.printStackTrace(); // Hata mesajını yazdır
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
 
 		return ResponseEntity.ok(specialization);

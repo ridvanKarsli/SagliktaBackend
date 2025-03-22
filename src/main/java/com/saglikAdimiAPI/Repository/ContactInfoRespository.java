@@ -109,12 +109,15 @@ public class ContactInfoRespository implements ContactInfoActionable {
 					contactInfo.setEmail(rs.getString("email").trim());
 					contactInfo.setPhoneNumber(rs.getString("phoneNumber").trim());
 
+				}else {
+					return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 				}
 				conn.close();
 				rs.close();
 			}
 		} catch (SQLException e) {
 			e.printStackTrace(); // Hata mesajını yazdır
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
 
 		return ResponseEntity.ok(contactInfo);
@@ -137,6 +140,10 @@ public class ContactInfoRespository implements ContactInfoActionable {
 
 			// Sonuçları döngü ile okuyoruz
 			while (rs.next()) {
+	            if (!rs.next()) {
+	                // Eğer hiçbir sonuç bulunmazsa 404 Not Found dön
+	                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+	            }
 				ContactInfo contact = new ContactInfo();
 				contact.setContactID(rs.getInt("contactID"));
 				contact.setEmail(rs.getString("email").trim());
@@ -152,6 +159,7 @@ public class ContactInfoRespository implements ContactInfoActionable {
 
 		} catch (SQLException e) {
 			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
 
 		return ResponseEntity.ok(contactList);

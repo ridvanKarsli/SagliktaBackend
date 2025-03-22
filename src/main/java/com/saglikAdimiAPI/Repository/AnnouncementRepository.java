@@ -103,12 +103,15 @@ public class AnnouncementRepository implements AnnouncementActionable {
 					announcement.setUploadDate(rs.getDate("uploadDate").toLocalDate());
 					announcement.setDoctorID(rs.getInt("userID"));
 
+				}else {
+					return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 				}
 				conn.close();
 				rs.close();
 			}
 		} catch (SQLException e) {
 			e.printStackTrace(); // Hata mesajını yazdır
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
 
 		return ResponseEntity.ok(announcement);
@@ -130,6 +133,10 @@ public class AnnouncementRepository implements AnnouncementActionable {
 			// Sorguyu çalıştır
 			try (ResultSet rs = stmt.executeQuery()) {
 				while (rs.next()) {
+		            if (!rs.next()) {
+		                // Eğer hiçbir sonuç bulunmazsa 404 Not Found dön
+		                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+		            }
 					// DiseaseHistory nesnesini oluştur ve doldur
 					Announcement announcement = new Announcement();
 
@@ -147,6 +154,7 @@ public class AnnouncementRepository implements AnnouncementActionable {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
 
 		return ResponseEntity.ok(announcementList);
