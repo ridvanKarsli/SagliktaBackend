@@ -15,7 +15,7 @@
 	<name>SaglikAdimiSpringRestAPI</name>
 	<description>Demo project for Spring Boot</description>
 	<url />
-	<licenses> 
+	<licenses>
 		<license />
 	</licenses>
 	<developers>
@@ -71,6 +71,16 @@
 			<artifactId>javax.mail</artifactId>
 			<version>1.6.2</version>
 		</dependency>
+
+
+		<!-- Lombok Bağımlılığı -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.18.24</version> <!-- Güncel sürümü kontrol edin -->
+			<scope>provided</scope>
+		</dependency>
+
 
 	</dependencies>
 

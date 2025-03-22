@@ -23,7 +23,8 @@ import com.saglikAdimiAPI.Model.Person;
 @Repository
 public class CommentsRepository implements CommentsActionable {
 
-	private static final String CONNECTION_STRING = "jdbc:postgresql://localhost:5433/SaglikAdimi_db?user=postgres&password=3519";
+	private static final String CONNECTION_STRING = "jdbc:postgresql://localhost:5433/SaglikAdimi_db?user=postgres&password=3519";	
+
 	private Connection conn;
 	//test
 

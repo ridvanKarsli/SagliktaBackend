@@ -12,9 +12,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 
 import com.saglikAdimiAPI.Abstraction.ReadablePatient;
-import com.saglikAdimiAPI.Helper.JwtService;
 import com.saglikAdimiAPI.Model.Patient;
-import com.saglikAdimiAPI.Model.Person;
+
+import lombok.Getter;
+import lombok.Setter;
 
 @Repository
 public class ReadablePatientRepository implements ReadablePatient {

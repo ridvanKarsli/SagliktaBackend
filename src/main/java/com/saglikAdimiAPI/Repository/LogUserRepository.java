@@ -21,9 +21,8 @@ import com.saglikAdimiAPI.Model.Person;
 
 @Repository
 public class LogUserRepository implements Logable<Patient> {
-
 	
-	private static final String CONNECTION_STRING = "jdbc:postgresql://localhost:5433/SaglikAdimi_db?user=postgres&password=3519";
+	private static final String CONNECTION_STRING = "jdbc:postgresql://clhtb6lu92mj2.cluster-czz5s0kz4scl.eu-west-1.rds.amazonaws.com:5432/d3ee0thpk00tbe?user=ubuffdepf41jfs&password=p22f739ec6892fed407dc52ed86c1963b0d0053957d30928da2bfd0d24bff391e";
 
 	private Connection conn;
 	PasswordUtil passwordUtil = new PasswordUtil();
@@ -31,6 +30,7 @@ public class LogUserRepository implements Logable<Patient> {
 	// veri tabanı işlemleri
 	@Override
 	public ResponseEntity<String> login(Person person) {
+		System.out.print("url : "+ CONNECTION_STRING );
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 

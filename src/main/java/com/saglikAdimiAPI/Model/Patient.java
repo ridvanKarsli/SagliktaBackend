@@ -2,7 +2,7 @@ package com.saglikAdimiAPI.Model;
 
 import java.time.LocalDate;
 import java.util.List;
-
+ 
 public class Patient extends Person {
 
 	private List<Disease> diseases;
