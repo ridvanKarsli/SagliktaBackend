@@ -24,7 +24,7 @@ public class ChatService implements ChatActionable {
 	@Override
 	public ResponseEntity<String> addChat(Chats chat, String token) {
 		// TODO Auto-generated method stub
-		if (isChatUsable(chat)) {
+		if (!isChatUsable(chat)) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Lütfen Bilgileri Kontrol Edip Tekrardan Deneyin!");
 		}
 		return chatRespository.addChat(chat, token);

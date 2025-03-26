@@ -28,7 +28,6 @@ public class LogUserService implements Logable<Patient> {
 		// TODO Auto-generated method stub
 		if ((person.getEmail().isEmpty()) || (person.getPassword().isEmpty())) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Kullanıcı adı veya şifre boş olamaz");
-
 		}
 		return logUserRepository.login(person);
 	}
@@ -37,9 +36,9 @@ public class LogUserService implements Logable<Patient> {
 	public ResponseEntity<String> SignUp(Person person) {
 		// TODO Auto-generated method stub
 		if (!isPersonUsable(person)) {
-
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Lütfen Bilgileri Kontrol Edip Tekrardan Deneyin!");
 		}
+		
 
 		return logUserRepository.SignUp(person);
 	}
@@ -62,44 +61,44 @@ public class LogUserService implements Logable<Patient> {
 		return logUserRepository.sendVerificationCode(email);
 	}
 	
-    public boolean isPersonUsable(Person person) {
-        // İsim ve soyisim sadece harflerden oluşmalı ve 20 karakteri geçmemeli
-        if (person.getName() == null || !person.getName().matches("[a-zA-Z]+") || person.getName().length() > 20) {
-            return false;
-        }
+	public boolean isPersonUsable(Person person) {
+	    // İsim ve soyisim sadece harflerden oluşmalı ve 20 karakteri geçmemeli
+	    if (person.getName() == null || person.getName().length() > 20) {
+	        return false;
+	    }
 
-        if (person.getSurname() == null || !person.getSurname().matches("[a-zA-Z]+") || person.getSurname().length() > 20) {
-            return false;
-        }
+	    if (person.getSurname() == null ||  person.getSurname().length() > 20) {
+	        return false;
+	    }
 
-        // Role "DOKTOR" veya "HASTA" olmalı
-        if (person.getRole() == null || (!person.getRole().equals("DOKTOR") && !person.getRole().equals("HASTA"))) {
-            return false;
-        }
+	    // Role "DOKTOR" veya "HASTA" olmalı
+	    if (person.getRole() == null || (!person.getRole().equals("DOKTOR") && !person.getRole().equals("HASTA"))) {
+	        return false;
+	    }
 
-        // Password en az 8 karakter olmalı
-        if (person.getPassword() == null || person.getPassword().length() < 8 || person.getPassword().length() >20) {
-            return false;
-        }
+	    // Password en az 8 karakter olmalı
+	    if (person.getPassword() == null || person.getPassword().length() < 8 || person.getPassword().length() > 20) {
+	        return false;
+	    }
 
-        // DateOfBirth "yyyy-MM-dd" formatında olmalı
-        if (person.getDateOfBirth() == null) {
-            return false;
-        }
+	    // DateOfBirth "yyyy-MM-dd" formatında olmalı
+	    if (person.getDateOfBirth() == null) {
+	        return false;
+	    }
 
-        // DateOfBirth kontrolü
-        LocalDate birthDate = person.getDateOfBirth();
-        LocalDate minimumDate = LocalDate.parse(LocalDate.now().toString(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+	    // DateOfBirth kontrolü
+	    LocalDate birthDate = person.getDateOfBirth();
+	    
+	    // Minimum 90 yıl önceki tarih ve maksimum 90 yıl sonraki tarih
+	    LocalDate minimumDate = LocalDate.now().minusYears(90); // 90 yıl önce
+	    LocalDate maximumDate = LocalDate.now().plusYears(90); // 90 yıl sonrası
 
-        // DateOfBirth'un geçerli olup olmadığını ve minimum tarihten önce olup olmadığını kontrol et
-        if (birthDate.isBefore(minimumDate)) {
-            return false;
-        }
+	    // DateOfBirth'un geçerli olup olmadığını ve aradaki tarih aralığına uygun olup olmadığını kontrol et
+	    if (birthDate.isBefore(minimumDate) || birthDate.isAfter(maximumDate)) {
+	        return false;
+	    }
 
-        return true; // Tüm kontroller geçtiyse
-    }
-	
-	
-
+	    return true; // Tüm kontroller geçtiyse
+	}
 
 }
