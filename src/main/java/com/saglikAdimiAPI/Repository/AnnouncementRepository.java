@@ -28,6 +28,9 @@ public class AnnouncementRepository implements AnnouncementActionable {
 	@Override
 	public ResponseEntity<String> addAnnouncement(Announcement announcementRequest, String token) {
 		// TODO Auto-generated method stub
+		JwtService jwtService = new JwtService();
+
+		Person person = jwtService.getPersonFromToken(token);
 		getConnection();
 		PreparedStatement insert;
 
@@ -39,7 +42,7 @@ public class AnnouncementRepository implements AnnouncementActionable {
 
 			insert.setString(1, announcementRequest.getTitle().trim());
 			insert.setString(2, announcementRequest.getContent().trim());
-			insert.setInt(3, announcementRequest.getDoctorID());
+			insert.setInt(3, person.getUserID());
 			insert.setDate(4, Date.valueOf(LocalDate.now()));
 
 			insert.executeUpdate();
