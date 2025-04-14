@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 
 import com.saglikAdimiAPI.Abstraction.Logable;
-import com.saglikAdimiAPI.Helper.EmailService;
 import com.saglikAdimiAPI.Helper.JwtService;
 import com.saglikAdimiAPI.Model.PasswordUtil;
 import com.saglikAdimiAPI.Model.Patient;
@@ -188,12 +187,8 @@ public class LogUserRepository implements Logable<Patient> {
 		}
 	}
 
-	@Override
-	public ResponseEntity<String> refreshToken(String token) {
-		// TODO Auto-generated method stub
-		return new ResponseEntity<>("Kayıt başarılı!", HttpStatus.OK);
-	}
-	
+
+	/*
 
 	@Override
 	public ResponseEntity<String> verificationEmail(String email, String code) {
@@ -214,7 +209,7 @@ public class LogUserRepository implements Logable<Patient> {
 		}
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Doğrulama kodu gönderilemedi!");
 	}
-	
+	*/
 
 	private void getConnection() {
 		try {

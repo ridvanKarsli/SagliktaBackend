@@ -50,6 +50,7 @@ public class LogUserController implements Logable<Patient> {
 
 	}
 	
+	/*
 	@PostMapping("/sendVerificationCode")
 	@ResponseStatus(HttpStatus.OK)
 	@Override
@@ -72,6 +73,6 @@ public class LogUserController implements Logable<Patient> {
 		return null;
 	}
 
-
+	 */
 
 }

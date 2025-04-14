@@ -8,13 +8,12 @@ public interface Logable<T> {
 
 	ResponseEntity<String> login(Person person);
 
-	ResponseEntity<String> SignUp(Person person);
-
-	ResponseEntity<String> refreshToken(String token);
+	ResponseEntity<String> SignUp(Person person);	
 	
+	/*
 	ResponseEntity<String> sendVerificationCode(String email);
 	
 	ResponseEntity<String> verificationEmail(String email, String code);
-	
+	*/
 
 }

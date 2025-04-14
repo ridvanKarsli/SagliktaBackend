@@ -15,4 +15,5 @@ public interface ChatActionable {
 	ResponseEntity<List<Chats>> getChats(String token);
 
 	ResponseEntity<List<Chats>> getAllChat(String token);
+	
 }

@@ -43,12 +43,7 @@ public class LogUserService implements Logable<Patient> {
 		return logUserRepository.SignUp(person);
 	}
 
-	@Override
-	public ResponseEntity<String> refreshToken(String token) {
-		// TODO Auto-generated method stub
-		return logUserRepository.refreshToken(token);
-	}
-
+	/*
 	@Override
 	public ResponseEntity<String> verificationEmail(String email, String code) {
 		// TODO Auto-generated method stub
@@ -60,6 +55,7 @@ public class LogUserService implements Logable<Patient> {
 		// TODO Auto-generated method stub
 		return logUserRepository.sendVerificationCode(email);
 	}
+	*/
 	
 	public boolean isPersonUsable(Person person) {
 	    // İsim ve soyisim sadece harflerden oluşmalı ve 20 karakteri geçmemeli
