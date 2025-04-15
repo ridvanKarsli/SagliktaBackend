@@ -67,27 +67,24 @@ public class ReadableUserRepository implements ReadablePerson {
 		
 		JwtService jwtService = new JwtService();
 		
-		Person person = jwtService.getPersonFromToken(token);
+		Person personFromToken = jwtService.getPersonFromToken(token);
 		
 
 		getConnection(); // Veritabanı bağlantısını a
-		Patient patient = new Patient();
-		String query = "SELECT * FROM public.\"User\" WHERE \"userID\" = ? AND \"role\" = 'HASTA'";
+		Person person = new Person();		
+		String query = "SELECT * FROM public.\"User\" WHERE \"userID\" = ?";
 
 		try (PreparedStatement ps = conn.prepareStatement(query)) {
-			ps.setInt(1, person.getUserID());
+			ps.setInt(1, personFromToken.getUserID());
 			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next()) { // Verinin varlığını kontrol et
-					patient.setUserID(rs.getInt("userID"));
-					patient.setName(rs.getString("name").trim());
-					patient.setSurname(rs.getString("surname").trim());
-					patient.setRole(rs.getString("role").trim());
-					patient.setDateOfBirth(rs.getDate("dateOfBirth").toLocalDate());
-					patient.setEmail(rs.getString("email").trim());
-					patient.setPassword(rs.getString("password").trim());
-
-					DiseaseRepository dr = new DiseaseRepository();
-					patient.setDiseases(dr.getDiseases(rs.getInt("userID"), token).getBody());
+					person.setUserID(rs.getInt("userID"));
+					person.setName(rs.getString("name").trim());
+					person.setSurname(rs.getString("surname").trim());
+					person.setRole(rs.getString("role").trim());
+					person.setDateOfBirth(rs.getDate("dateOfBirth").toLocalDate());
+					person.setEmail(rs.getString("email").trim());
+					person.setPassword(rs.getString("password").trim());
 
 				}else {
 					return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -99,7 +96,7 @@ public class ReadableUserRepository implements ReadablePerson {
 			e.printStackTrace(); // Hata mesajını yazdır
 		}
 
-		return ResponseEntity.ok(patient);
+		return ResponseEntity.ok(person);
 	}
 
 	private void getConnection() {
