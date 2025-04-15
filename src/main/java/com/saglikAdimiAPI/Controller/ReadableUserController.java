@@ -44,4 +44,12 @@ public class ReadableUserController implements ReadablePerson {
 
 	}
 
+	@GetMapping("/loggedUser")
+	@ResponseStatus(HttpStatus.OK)
+	@Override
+	public ResponseEntity<Person> getLoggedPerson(@RequestHeader("Authorization") String token) {
+		// TODO Auto-generated method stub
+		return readableUserService.getLoggedPerson(token);
+	}
+
 }

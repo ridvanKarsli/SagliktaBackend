@@ -9,5 +9,7 @@ import com.saglikAdimiAPI.Model.Person;
 public interface ReadablePerson {
 
 	ResponseEntity<List<Person>> getAllPerson(String token);
+	
+	ResponseEntity<Person> getLoggedPerson(String token);
 
 }

@@ -8,10 +8,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 
 import com.saglikAdimiAPI.Abstraction.ReadablePerson;
+import com.saglikAdimiAPI.Helper.JwtService;
+import com.saglikAdimiAPI.Model.Patient;
 import com.saglikAdimiAPI.Model.Person;
 
 @Repository
@@ -55,6 +58,48 @@ public class ReadableUserRepository implements ReadablePerson {
 
 		return ResponseEntity.ok(userList);
 
+	}
+	
+
+	@Override
+	public ResponseEntity<Person> getLoggedPerson(String token) {
+		// TODO Auto-generated method stub
+		
+		JwtService jwtService = new JwtService();
+		
+		Person person = jwtService.getPersonFromToken(token);
+		
+
+		getConnection(); // Veritabanı bağlantısını a
+		Patient patient = new Patient();
+		String query = "SELECT * FROM public.\"User\" WHERE \"userID\" = ? AND \"role\" = 'HASTA'";
+
+		try (PreparedStatement ps = conn.prepareStatement(query)) {
+			ps.setInt(1, person.getUserID());
+			try (ResultSet rs = ps.executeQuery()) {
+				if (rs.next()) { // Verinin varlığını kontrol et
+					patient.setUserID(rs.getInt("userID"));
+					patient.setName(rs.getString("name").trim());
+					patient.setSurname(rs.getString("surname").trim());
+					patient.setRole(rs.getString("role").trim());
+					patient.setDateOfBirth(rs.getDate("dateOfBirth").toLocalDate());
+					patient.setEmail(rs.getString("email").trim());
+					patient.setPassword(rs.getString("password").trim());
+
+					DiseaseRepository dr = new DiseaseRepository();
+					patient.setDiseases(dr.getDiseases(rs.getInt("userID"), token).getBody());
+
+				}else {
+					return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+				}
+				conn.close();
+				rs.close();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace(); // Hata mesajını yazdır
+		}
+
+		return ResponseEntity.ok(patient);
 	}
 
 	private void getConnection() {

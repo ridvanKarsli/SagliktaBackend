@@ -26,4 +26,10 @@ public class ReadableUserService implements ReadablePerson {
 		return readableUserRepository.getAllPerson(token);
 	}
 
+	@Override
+	public ResponseEntity<Person> getLoggedPerson(String token) {
+		// TODO Auto-generated method stub
+		return readableUserRepository.getLoggedPerson(token);
+	}
+
 }
