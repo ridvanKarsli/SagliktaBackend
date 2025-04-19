@@ -12,7 +12,7 @@ public interface ChatActionable {
 
 	ResponseEntity<String> deleteChat(int chatID, String token);
 
-	ResponseEntity<List<Chats>> getChats(String token);
+	ResponseEntity<List<Chats>> getChats(int userID, String token);
 
 	ResponseEntity<List<Chats>> getAllChat(String token);
 	

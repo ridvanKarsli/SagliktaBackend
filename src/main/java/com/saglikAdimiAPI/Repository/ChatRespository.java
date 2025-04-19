@@ -91,14 +91,8 @@ public class ChatRespository implements ChatActionable {
 	}
 
 	@Override
-	public ResponseEntity<List<Chats>> getChats(String token) {
+	public ResponseEntity<List<Chats>> getChats(int userID, String token) {
 		// TODO Auto-generated method stub
-
-		// tokenden userID bilgisini alma
-		JwtService jwtService = new JwtService();
-
-		Person person = jwtService.getPersonFromToken(token);
-		System.out.print(person.getUserID());
 
 		List<Chats> chatList = new ArrayList<>(); // Kullanıcıları tutacak liste
 		getConnection(); // Veritabanı bağlantısını al
@@ -108,7 +102,7 @@ public class ChatRespository implements ChatActionable {
 		try {
 			PreparedStatement ps = conn.prepareStatement(query);
 
-			ps.setInt(1, person.getUserID());
+			ps.setInt(1, userID);
 			ResultSet rs = ps.executeQuery();
 
 			// Sonuçları döngü ile okuyoruz
@@ -123,7 +117,7 @@ public class ChatRespository implements ChatActionable {
 				chat.setLikeCount(rs.getInt("likeCount"));
 				chat.setDislikeCount(rs.getInt("dislikeCount"));
 				chat.setUploadDate(rs.getDate("uploadDate").toLocalDate());
-				chat.setUserID(person.getUserID());
+				chat.setUserID(userID);
 
 				CommentsRepository cr = new CommentsRepository();
 				chat.setComments(cr.getComments(rs.getInt("chatID"), token).getBody());

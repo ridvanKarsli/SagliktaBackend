@@ -61,11 +61,11 @@ public class ChatController implements ChatActionable {
 	@GetMapping("/getChats")
 	@ResponseStatus(HttpStatus.OK)
 	@Override
-	public ResponseEntity<List<Chats>> getChats(@RequestHeader("Authorization") String token) {
+	public ResponseEntity<List<Chats>> getChats(@RequestParam int userID, @RequestHeader("Authorization") String token) {
 		// TODO Auto-generated method stub
 
 		if (!jwtService.isTokenExpired(token)) {
-			return chatService.getChats(token);
+			return chatService.getChats(userID, token);
 		} else {
 			// Token süresi dolmuşsa veya geçersizse, Unauthorized hata mesajı döndürüyoruz
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null); // veya .body("Token is invalid or

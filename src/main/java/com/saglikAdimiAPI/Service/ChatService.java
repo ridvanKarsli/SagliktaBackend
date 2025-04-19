@@ -37,9 +37,9 @@ public class ChatService implements ChatActionable {
 	}
 
 	@Override
-	public ResponseEntity<List<Chats>> getChats(String token) {
+	public ResponseEntity<List<Chats>> getChats(int userID, String token) {
 		// TODO Auto-generated method stub
-		return chatRespository.getChats(token);
+		return chatRespository.getChats(userID, token);
 	}
 
 	@Override
