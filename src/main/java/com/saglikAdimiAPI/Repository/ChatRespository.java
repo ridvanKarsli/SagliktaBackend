@@ -151,10 +151,7 @@ public class ChatRespository implements ChatActionable {
 
 			// Sonuçları döngü ile okuyoruz
 			while (rs.next()) {
-	            if (!rs.next()) {
-	                // Eğer hiçbir sonuç bulunmazsa 404 Not Found dön
-	                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-	            }
+
 				Chats chat = new Chats();
 				chat.setChatID(rs.getInt("chatID"));
 				chat.setMessage(rs.getString("message").trim());
