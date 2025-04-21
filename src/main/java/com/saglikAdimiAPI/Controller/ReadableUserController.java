@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -50,6 +51,14 @@ public class ReadableUserController implements ReadablePerson {
 	public ResponseEntity<Person> getLoggedPerson(@RequestHeader("Authorization") String token) {
 		// TODO Auto-generated method stub
 		return readableUserService.getLoggedPerson(token);
+	}
+
+	@GetMapping("/getUser")
+	@ResponseStatus(HttpStatus.OK)
+	@Override
+	public ResponseEntity<Person> getPerson(@RequestParam int userID, @RequestHeader("Authorization") String token) {
+		// TODO Auto-generated method stub
+		return readableUserService.getPerson(userID, token);
 	}
 
 }

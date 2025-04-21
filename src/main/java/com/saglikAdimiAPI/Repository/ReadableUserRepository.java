@@ -98,6 +98,40 @@ public class ReadableUserRepository implements ReadablePerson {
 
 		return ResponseEntity.ok(person);
 	}
+	
+	@Override
+	public ResponseEntity<Person> getPerson(int userID, String token) {
+		// TODO Auto-generated method stub		
+
+		getConnection(); // Veritabanı bağlantısını a
+		Person person = new Person();		
+		String query = "SELECT * FROM public.\"User\" WHERE \"userID\" = ?";
+
+		try (PreparedStatement ps = conn.prepareStatement(query)) {
+			ps.setInt(1, userID);
+			try (ResultSet rs = ps.executeQuery()) {
+				if (rs.next()) { // Verinin varlığını kontrol et
+					person.setUserID(rs.getInt("userID"));
+					person.setName(rs.getString("name").trim());
+					person.setSurname(rs.getString("surname").trim());
+					person.setRole(rs.getString("role").trim());
+					person.setDateOfBirth(rs.getDate("dateOfBirth").toLocalDate());
+					person.setEmail(rs.getString("email").trim());
+					person.setPassword(rs.getString("password").trim());
+
+				}else {
+					return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+				}
+				conn.close();
+				rs.close();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace(); // Hata mesajını yazdır
+		}
+
+		return ResponseEntity.ok(person);
+	}
+
 
 	private void getConnection() {
 		try {
@@ -108,5 +142,4 @@ public class ReadableUserRepository implements ReadablePerson {
 		}
 
 	}
-
 }

@@ -10,6 +10,8 @@ public interface ReadablePerson {
 
 	ResponseEntity<List<Person>> getAllPerson(String token);
 	
+	ResponseEntity<Person> getPerson(int userID, String token);
+	
 	ResponseEntity<Person> getLoggedPerson(String token);
 
 }
