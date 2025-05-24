@@ -48,6 +48,12 @@ public class ChatService implements ChatActionable {
 		return chatRespository.getAllChat(token);
 	}
 	
+	@Override
+	public ResponseEntity<List<Chats>> getChatsWithFiltre(String token, String category) {
+		// TODO Auto-generated method stub
+		return chatRespository.getChatsWithFiltre(token, category);
+	}
+	
 	private Boolean isChatUsable(Chats chat) {
 	    String message = chat.getMessage();
 

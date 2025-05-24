@@ -5,8 +5,10 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,24 +19,24 @@ import org.springframework.web.bind.annotation.RestController;
 import com.saglikAdimiAPI.Abstraction.DiseaseActionable;
 import com.saglikAdimiAPI.Helper.JwtService;
 import com.saglikAdimiAPI.Model.Disease;
-import com.saglikAdimiAPI.Model.Patient;
+import com.saglikAdimiAPI.Model.PublicUser;
 import com.saglikAdimiAPI.Service.DiseaseService;
 
 @RestController
 @RequestMapping("/disease")
-public class DiseaseController implements DiseaseActionable<Patient> {
+public class DiseaseController implements DiseaseActionable<PublicUser> {
 
 	private final DiseaseService diseaseService;
 
-	JwtService jwtService = new JwtService();
+	private final JwtService jwtService;
 
 	@Autowired
-	public DiseaseController(DiseaseService diseaseService) {
+	public DiseaseController(DiseaseService diseaseService, JwtService jwtService) {
 		this.diseaseService = diseaseService;
+		this.jwtService = jwtService;
 	}
 
 	@PostMapping("/addDisease")
-	@ResponseStatus(HttpStatus.OK)
 	@Override
 	public ResponseEntity<String> addDisease(@RequestBody Disease disease,
 			@RequestHeader("Authorization") String token) {
@@ -54,7 +56,6 @@ public class DiseaseController implements DiseaseActionable<Patient> {
 	}
 
 	@GetMapping("/getDiseases")
-	@ResponseStatus(HttpStatus.OK)
 	@Override
 	public ResponseEntity<List<Disease>> getDiseases(@RequestParam int userID,
 			@RequestHeader("Authorization") String token) {
@@ -73,7 +74,6 @@ public class DiseaseController implements DiseaseActionable<Patient> {
 	}
 
 	@GetMapping("/getDisease")
-	@ResponseStatus(HttpStatus.OK)
 	@Override
 	public ResponseEntity<Disease> getDisease(@RequestParam int diseaseID,
 			@RequestHeader("Authorization") String token) {
@@ -91,8 +91,7 @@ public class DiseaseController implements DiseaseActionable<Patient> {
 		}
 	}
 
-	@PostMapping("/deleteDisease")
-	@ResponseStatus(HttpStatus.OK)
+	@DeleteMapping("/deleteDisease")
 	@Override
 	public ResponseEntity<String> deleteDisease(@RequestParam int diseaseID,
 			@RequestHeader("Authorization") String token) {
@@ -110,8 +109,7 @@ public class DiseaseController implements DiseaseActionable<Patient> {
 		}
 	}
 
-	@PostMapping("/updateDisease")
-	@ResponseStatus(HttpStatus.OK)
+	@PutMapping("/updateDisease")
 	@Override
 	public ResponseEntity<String> updateDisease(@RequestBody Disease disease,
 			@RequestHeader("Authorization") String token) {
@@ -130,7 +128,6 @@ public class DiseaseController implements DiseaseActionable<Patient> {
 	}
 
 	@GetMapping("/getDiseaseNames")
-	@ResponseStatus(HttpStatus.OK)
 	@Override
 	public ResponseEntity<List<String>> getDiseaseNames(@RequestHeader("Authorization") String token) {
 		// TODO Auto-generated method stub

@@ -10,14 +10,15 @@ public class Chats {
 	private int likeCount;
 	private int dislikeCount;
 	private LocalDate uploadDate;
-	private int userID;
+	private int userID;	
+	private String category;
 	private List<Comments> comments;
 
 	public Chats() {
 
 	}
 
-	public Chats(int chatID, String message, int likeCount, int dislikeCount, LocalDate uploadDate, int userID,
+	public Chats(int chatID, String message, int likeCount, int dislikeCount, LocalDate uploadDate, int userID, String category,  
 			List<Comments> comments) {
 		super();
 		this.chatID = chatID;
@@ -26,6 +27,7 @@ public class Chats {
 		this.dislikeCount = dislikeCount;
 		this.uploadDate = uploadDate;
 		this.userID = userID;
+		this.category = category;
 		this.comments = comments;
 	}
 
@@ -75,6 +77,14 @@ public class Chats {
 
 	public void setUserID(int userID) {
 		this.userID = userID;
+	}
+	
+	public String getCategory() {
+		return category;
+	}
+	
+	public void setCategory(String category) {
+		this.category = category;
 	}
 
 	public List<Comments> getComments() {

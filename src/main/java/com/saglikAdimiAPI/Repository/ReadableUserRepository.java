@@ -8,19 +8,27 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 
 import com.saglikAdimiAPI.Abstraction.ReadablePerson;
 import com.saglikAdimiAPI.Helper.JwtService;
-import com.saglikAdimiAPI.Model.Patient;
 import com.saglikAdimiAPI.Model.Person;
 
 @Repository
 public class ReadableUserRepository implements ReadablePerson {
 
-	private static final String CONNECTION_STRING = "jdbc:postgresql://clhtb6lu92mj2.cluster-czz5s0kz4scl.eu-west-1.rds.amazonaws.com:5432/d3ee0thpk00tbe?user=ubuffdepf41jfs&password=p22f739ec6892fed407dc52ed86c1963b0d0053957d30928da2bfd0d24bff391e";
+	@Value("${spring.datasource.url}")
+	private String dbUrl;
+
+	@Value("${spring.datasource.username}")
+	private String dbUsername;
+
+	@Value("${spring.datasource.password}")
+	private String dbPassword;
+
 	private Connection conn;
 
 	@Override
@@ -59,19 +67,17 @@ public class ReadableUserRepository implements ReadablePerson {
 		return ResponseEntity.ok(userList);
 
 	}
-	
 
 	@Override
 	public ResponseEntity<Person> getLoggedPerson(String token) {
 		// TODO Auto-generated method stub
-		
+
 		JwtService jwtService = new JwtService();
-		
+
 		Person personFromToken = jwtService.getPersonFromToken(token);
-		
 
 		getConnection(); // Veritabanı bağlantısını a
-		Person person = new Person();		
+		Person person = new Person();
 		String query = "SELECT * FROM public.\"User\" WHERE \"userID\" = ?";
 
 		try (PreparedStatement ps = conn.prepareStatement(query)) {
@@ -86,7 +92,7 @@ public class ReadableUserRepository implements ReadablePerson {
 					person.setEmail(rs.getString("email").trim());
 					person.setPassword(rs.getString("password").trim());
 
-				}else {
+				} else {
 					return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 				}
 				conn.close();
@@ -98,13 +104,13 @@ public class ReadableUserRepository implements ReadablePerson {
 
 		return ResponseEntity.ok(person);
 	}
-	
+
 	@Override
 	public ResponseEntity<Person> getPerson(int userID, String token) {
-		// TODO Auto-generated method stub		
+		// TODO Auto-generated method stub
 
 		getConnection(); // Veritabanı bağlantısını a
-		Person person = new Person();		
+		Person person = new Person();
 		String query = "SELECT * FROM public.\"User\" WHERE \"userID\" = ?";
 
 		try (PreparedStatement ps = conn.prepareStatement(query)) {
@@ -119,7 +125,7 @@ public class ReadableUserRepository implements ReadablePerson {
 					person.setEmail(rs.getString("email").trim());
 					person.setPassword(rs.getString("password").trim());
 
-				}else {
+				} else {
 					return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 				}
 				conn.close();
@@ -132,14 +138,14 @@ public class ReadableUserRepository implements ReadablePerson {
 		return ResponseEntity.ok(person);
 	}
 
-
 	private void getConnection() {
 		try {
-			conn = DriverManager.getConnection(CONNECTION_STRING);
+			conn = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 	}
+
 }

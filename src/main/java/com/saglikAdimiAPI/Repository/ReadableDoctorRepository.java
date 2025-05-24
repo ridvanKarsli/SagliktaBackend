@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
@@ -20,7 +21,15 @@ import com.saglikAdimiAPI.Model.Person;
 @Repository
 public class ReadableDoctorRepository implements ReadableDoctor {
 
-	private static final String CONNECTION_STRING = "jdbc:postgresql://clhtb6lu92mj2.cluster-czz5s0kz4scl.eu-west-1.rds.amazonaws.com:5432/d3ee0thpk00tbe?user=ubuffdepf41jfs&password=p22f739ec6892fed407dc52ed86c1963b0d0053957d30928da2bfd0d24bff391e";
+	@Value("${spring.datasource.url}")
+	private String dbUrl;
+
+	@Value("${spring.datasource.username}")
+	private String dbUsername;
+
+	@Value("${spring.datasource.password}")
+	private String dbPassword;
+
 	private Connection conn;
 
 	@Override
@@ -29,7 +38,7 @@ public class ReadableDoctorRepository implements ReadableDoctor {
 		List<Doctor> doctorList = new ArrayList<>(); // Kullanıcıları tutacak liste
 		getConnection(); // Veritabanı bağlantısını al
 
-		String query = "SELECT * FROM public.\"User\" WHERE \"role\" = 'DOKTOR'";
+		String query = "SELECT * FROM public.\"User\" WHERE \"role\" = 'doctor'";
 
 		try {
 			PreparedStatement ps = conn.prepareStatement(query);
@@ -81,7 +90,7 @@ public class ReadableDoctorRepository implements ReadableDoctor {
 		getConnection(); // Veritabanı bağlantısını al
 		Doctor doctor = null; // Eğer sonuç bulunmazsa null dönecek
 
-		String query = "SELECT * FROM public.\"User\" WHERE \"userID\" = ? AND \"role\" = 'DOKTOR'";
+		String query = "SELECT * FROM public.\"User\" WHERE \"userID\" = ? AND \"role\" = 'doctor'";
 
 		try (PreparedStatement ps = conn.prepareStatement(query)) {
 			ps.setInt(1, userID);
@@ -108,7 +117,7 @@ public class ReadableDoctorRepository implements ReadableDoctor {
 					AnnouncementRepository as = new AnnouncementRepository();
 					doctor.setAnnouncement(as.getAnnouncements(userID, token).getBody());
 
-				}else {
+				} else {
 					return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 				}
 				conn.close();
@@ -124,7 +133,7 @@ public class ReadableDoctorRepository implements ReadableDoctor {
 
 	private void getConnection() {
 		try {
-			conn = DriverManager.getConnection(CONNECTION_STRING);
+			conn = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

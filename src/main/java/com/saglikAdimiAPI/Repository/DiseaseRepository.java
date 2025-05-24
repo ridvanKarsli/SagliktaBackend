@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
@@ -16,13 +17,21 @@ import org.springframework.stereotype.Repository;
 import com.saglikAdimiAPI.Abstraction.DiseaseActionable;
 import com.saglikAdimiAPI.Helper.JwtService;
 import com.saglikAdimiAPI.Model.Disease;
-import com.saglikAdimiAPI.Model.Patient;
+import com.saglikAdimiAPI.Model.PublicUser;
 import com.saglikAdimiAPI.Model.Person;
 
 @Repository
-public class DiseaseRepository implements DiseaseActionable<Patient> {
+public class DiseaseRepository implements DiseaseActionable<PublicUser> {
 
-	private static final String CONNECTION_STRING = "jdbc:postgresql://clhtb6lu92mj2.cluster-czz5s0kz4scl.eu-west-1.rds.amazonaws.com:5432/d3ee0thpk00tbe?user=ubuffdepf41jfs&password=p22f739ec6892fed407dc52ed86c1963b0d0053957d30928da2bfd0d24bff391e";
+	@Value("${spring.datasource.url}")
+	private String dbUrl;
+
+	@Value("${spring.datasource.username}")
+	private String dbUsername;
+
+	@Value("${spring.datasource.password}")
+	private String dbPassword;
+
 	private Connection conn;
 
 	@Override
@@ -60,54 +69,54 @@ public class DiseaseRepository implements DiseaseActionable<Patient> {
 
 	@Override
 	public ResponseEntity<List<Disease>> getDiseases(int userID, String token) {
-	    // Veritabanı bağlantısını oluştur
-	    getConnection();
+		// Veritabanı bağlantısını oluştur
+		getConnection();
 
-	    // SQL sorgusu
-	    String query = "SELECT * FROM public.\"Diseases\" WHERE \"userID\" = ?;";
-	    List<Disease> diseases = new ArrayList<>();
+		// SQL sorgusu
+		String query = "SELECT * FROM public.\"Diseases\" WHERE \"userID\" = ?;";
+		List<Disease> diseases = new ArrayList<>();
 
-	    try (PreparedStatement stmt = conn.prepareStatement(query)) {
-	        // Sorguya parametreyi ata
-	        stmt.setInt(1, userID);
+		try (PreparedStatement stmt = conn.prepareStatement(query)) {
+			// Sorguya parametreyi ata
+			stmt.setInt(1, userID);
 
-	        // Sorguyu çalıştır
-	        try (ResultSet rs = stmt.executeQuery()) {
-	            // Sonuçları işleme
-	            if (!rs.next()) {
-	                // Eğer hiçbir sonuç bulunmazsa 404 Not Found dön
-	                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-	            }
+			// Sorguyu çalıştır
+			try (ResultSet rs = stmt.executeQuery()) {
+				// Sonuçları işleme
+				if (!rs.next()) {
+					// Eğer hiçbir sonuç bulunmazsa 404 Not Found dön
+					return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+				}
 
-	            do {
-	                // Disease nesnesini oluştur ve doldur
-	                Disease disease = new Disease();
+				do {
+					// Disease nesnesini oluştur ve doldur
+					Disease disease = new Disease();
 
-	                disease.setDiseaseID(rs.getInt("diseaseID"));
-	                disease.setDiseaseName(rs.getString("name").trim());
-	                disease.setDateOfDiagnosis(rs.getDate("dateOfDiagnosis").toLocalDate());
-	                disease.setUserID(rs.getInt("userID"));
+					disease.setDiseaseID(rs.getInt("diseaseID"));
+					disease.setDiseaseName(rs.getString("name").trim());
+					disease.setDateOfDiagnosis(rs.getDate("dateOfDiagnosis").toLocalDate());
+					disease.setUserID(rs.getInt("userID"));
 
-	                // Listeye ekle
-	                diseases.add(disease);
-	            } while (rs.next());
+					// Listeye ekle
+					diseases.add(disease);
+				} while (rs.next());
 
-	            // Bağlantıyı kapat
-	            conn.close();
-	            rs.close();
-	        }
-	    } catch (SQLException e) {
-	        // SQL hatası durumunda 500 Internal Server Error dön
-	        e.printStackTrace();
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-	    } catch (Exception e) {
-	        // Genel hata durumunda da 500 Internal Server Error dön
-	        e.printStackTrace();
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-	    }
+				// Bağlantıyı kapat
+				conn.close();
+				rs.close();
+			}
+		} catch (SQLException e) {
+			// SQL hatası durumunda 500 Internal Server Error dön
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+		} catch (Exception e) {
+			// Genel hata durumunda da 500 Internal Server Error dön
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+		}
 
-	    // Veriler başarılı şekilde bulunduysa 200 OK dön
-	    return ResponseEntity.ok(diseases);
+		// Veriler başarılı şekilde bulunduysa 200 OK dön
+		return ResponseEntity.ok(diseases);
 	}
 
 	@Override
@@ -193,7 +202,7 @@ public class DiseaseRepository implements DiseaseActionable<Patient> {
 					disease.setDateOfDiagnosis(rs.getDate("dateOfDiagnosis").toLocalDate());
 					disease.setUserID(rs.getInt("userID"));
 
-				}else {
+				} else {
 					return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 				}
 				conn.close();
@@ -212,7 +221,7 @@ public class DiseaseRepository implements DiseaseActionable<Patient> {
 		// TODO Auto-generated method stub
 
 		getConnection(); // Veritabanı bağlantısını a
-		Patient patient = new Patient();
+		PublicUser patient = new PublicUser();
 		String query = "SELECT * FROM public.\"DiseaseNames\"";
 		List<String> diseaseNameList = new ArrayList<>();
 
@@ -233,10 +242,10 @@ public class DiseaseRepository implements DiseaseActionable<Patient> {
 
 		return ResponseEntity.ok(diseaseNameList);
 	}
-	
+
 	private void getConnection() {
 		try {
-			conn = DriverManager.getConnection(CONNECTION_STRING);
+			conn = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -5,29 +5,29 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.saglikAdimiAPI.Abstraction.ReadablePatient;
-import com.saglikAdimiAPI.Model.Patient;
-import com.saglikAdimiAPI.Repository.ReadablePatientRepository;
+import com.saglikAdimiAPI.Abstraction.ReadablePublicUser;
+import com.saglikAdimiAPI.Model.PublicUser;
+import com.saglikAdimiAPI.Repository.ReadablePublicUserRepository;
 
 @Service
-public class ReadablePatientService implements ReadablePatient {
+public class ReadablePublicUserService implements ReadablePublicUser {
 
-	private final ReadablePatientRepository readablePatientRepository;
+	private final ReadablePublicUserRepository readablePatientRepository;
 
-	public ReadablePatientService(ReadablePatientRepository readablePatientRepository) {
+	public ReadablePublicUserService(ReadablePublicUserRepository readablePatientRepository) {
 		this.readablePatientRepository = readablePatientRepository;
 	}
 
 	@Override
-	public ResponseEntity<List<Patient>> getAllPatient(String token) {
+	public ResponseEntity<List<PublicUser>> getAllPublicUser(String token) {
 		// TODO Auto-generated method stub
-		return readablePatientRepository.getAllPatient(token);
+		return readablePatientRepository.getAllPublicUser(token);
 	}
 
 	@Override
-	public ResponseEntity<Patient> getPatient(int userID, String token) {
+	public ResponseEntity<PublicUser> getPublicUser(int userID, String token) {
 		// TODO Auto-generated method stub
-		return readablePatientRepository.getPatient(userID, token);
+		return readablePatientRepository.getPublicUser(userID, token);
 	}
-		
+
 }

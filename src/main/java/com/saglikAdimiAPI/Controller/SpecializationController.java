@@ -5,8 +5,10 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,15 +27,15 @@ public class SpecializationController implements SpecializationActionable {
 
 	private final SpecializationService specializationService;
 
-	JwtService jwtService = new JwtService();
+	private final JwtService jwtService;
 
 	@Autowired
-	public SpecializationController(SpecializationService specializationService) {
+	public SpecializationController(SpecializationService specializationService, JwtService jwtService) {
 		this.specializationService = specializationService;
+		this.jwtService = jwtService;
 	}
 
 	@PostMapping("/addSpecialization")
-	@ResponseStatus(HttpStatus.OK)
 	@Override
 	public ResponseEntity<String> addSpecialization(@RequestBody Specialization specialization,
 			@RequestHeader("Authorization") String token) {
@@ -51,8 +53,7 @@ public class SpecializationController implements SpecializationActionable {
 		}
 	}
 
-	@PostMapping("/deleteSpecialization")
-	@ResponseStatus(HttpStatus.OK)
+	@DeleteMapping("/deleteSpecialization")
 	@Override
 	public ResponseEntity<String> deleteSpecialization(@RequestParam int specializationID,
 			@RequestHeader("Authorization") String token) {
@@ -70,8 +71,7 @@ public class SpecializationController implements SpecializationActionable {
 		}
 	}
 
-	@PostMapping("/updateSpecialization")
-	@ResponseStatus(HttpStatus.OK)
+	@PutMapping("/updateSpecialization")
 	@Override
 	public ResponseEntity<String> updateSpecialization(@RequestBody Specialization specialization,
 			@RequestHeader("Authorization") String token) {
@@ -90,7 +90,6 @@ public class SpecializationController implements SpecializationActionable {
 	}
 
 	@GetMapping("/getSpecializations")
-	@ResponseStatus(HttpStatus.OK)
 	@Override
 	public ResponseEntity<List<Specialization>> getSpecializations(@RequestParam int userID,
 			@RequestHeader("Authorization") String token) {
@@ -109,7 +108,6 @@ public class SpecializationController implements SpecializationActionable {
 	}
 
 	@GetMapping("/getSpecialization")
-	@ResponseStatus(HttpStatus.OK)
 	@Override
 	public ResponseEntity<Specialization> getSpecialization(@RequestParam int specializationID,
 			@RequestHeader("Authorization") String token) {

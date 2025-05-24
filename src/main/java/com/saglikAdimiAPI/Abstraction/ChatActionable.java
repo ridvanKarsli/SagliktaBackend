@@ -16,4 +16,6 @@ public interface ChatActionable {
 
 	ResponseEntity<List<Chats>> getAllChat(String token);
 	
+	ResponseEntity<List<Chats>> getChatsWithFiltre(String token, String category);
+	
 }

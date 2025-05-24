@@ -25,15 +25,15 @@ public class ReadableUserController implements ReadablePerson {
 
 	private final ReadableUserService readableUserService;
 
-	JwtService jwtService = new JwtService();
+	private final JwtService jwtService;
 
 	@Autowired
-	public ReadableUserController(ReadableUserService readableUserService) {
+	public ReadableUserController(ReadableUserService readableUserService, JwtService jwtService) {
 		this.readableUserService = readableUserService;
+		this.jwtService = jwtService;
 	}
 
 	@GetMapping("/users")
-	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<List<Person>> getAllPerson(@RequestHeader("Authorization") String token) {
 		// TODO Auto-generated method stub
 
@@ -46,7 +46,6 @@ public class ReadableUserController implements ReadablePerson {
 	}
 
 	@GetMapping("/loggedUser")
-	@ResponseStatus(HttpStatus.OK)
 	@Override
 	public ResponseEntity<Person> getLoggedPerson(@RequestHeader("Authorization") String token) {
 		// TODO Auto-generated method stub
@@ -54,7 +53,6 @@ public class ReadableUserController implements ReadablePerson {
 	}
 
 	@GetMapping("/getUser")
-	@ResponseStatus(HttpStatus.OK)
 	@Override
 	public ResponseEntity<Person> getPerson(@RequestParam int userID, @RequestHeader("Authorization") String token) {
 		// TODO Auto-generated method stub

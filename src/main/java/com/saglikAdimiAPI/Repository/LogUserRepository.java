@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
@@ -15,20 +16,28 @@ import org.springframework.stereotype.Repository;
 import com.saglikAdimiAPI.Abstraction.Logable;
 import com.saglikAdimiAPI.Helper.JwtService;
 import com.saglikAdimiAPI.Model.PasswordUtil;
-import com.saglikAdimiAPI.Model.Patient;
+import com.saglikAdimiAPI.Model.PublicUser;
 import com.saglikAdimiAPI.Model.Person;
 
 @Repository
-public class LogUserRepository implements Logable<Patient> {
-	
-	private static final String CONNECTION_STRING = "jdbc:postgresql://clhtb6lu92mj2.cluster-czz5s0kz4scl.eu-west-1.rds.amazonaws.com:5432/d3ee0thpk00tbe?user=ubuffdepf41jfs&password=p22f739ec6892fed407dc52ed86c1963b0d0053957d30928da2bfd0d24bff391e";
+public class LogUserRepository implements Logable<PublicUser> {
+
+	@Value("${spring.datasource.url}")
+	private String dbUrl;
+
+	@Value("${spring.datasource.username}")
+	private String dbUsername;
+
+	@Value("${spring.datasource.password}")
+	private String dbPassword;
 
 	private Connection conn;
+
 	PasswordUtil passwordUtil = new PasswordUtil();
 
 	// veri tabanı işlemleri
 	@Override
-	public ResponseEntity<String> login(Person person) {		
+	public ResponseEntity<String> login(Person person) {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 
@@ -187,33 +196,9 @@ public class LogUserRepository implements Logable<Patient> {
 		}
 	}
 
-
-	/*
-
-	@Override
-	public ResponseEntity<String> verificationEmail(String email, String code) {
-		// TODO Auto-generated method stub
-		EmailService emailService = new EmailService();
-		if (emailService.verifyCode(email, code)) {
-			 return ResponseEntity.ok("Doğrulama işlemi başarıyla gerçekleştirildi!");
-        }
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Doğrulama Kodu hatalı!");
-	}
-
-	@Override
-	public ResponseEntity<String> sendVerificationCode(String email) {
-		// TODO Auto-generated method stub
-		EmailService emailService = new EmailService();
-		if(emailService.sendVerificationCode(email)) {
-			return ResponseEntity.ok("Doğrulama kodu başarıyla gönderildi!");
-		}
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Doğrulama kodu gönderilemedi!");
-	}
-	*/
-
 	private void getConnection() {
 		try {
-			conn = DriverManager.getConnection(CONNECTION_STRING);
+			conn = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

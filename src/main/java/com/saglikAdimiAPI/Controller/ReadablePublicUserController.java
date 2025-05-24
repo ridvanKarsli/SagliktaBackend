@@ -12,45 +12,45 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.saglikAdimiAPI.Abstraction.ReadablePatient;
+import com.saglikAdimiAPI.Abstraction.ReadablePublicUser;
 import com.saglikAdimiAPI.Helper.JwtService;
-import com.saglikAdimiAPI.Model.Patient;
-import com.saglikAdimiAPI.Service.ReadablePatientService;
+import com.saglikAdimiAPI.Model.PublicUser;
+import com.saglikAdimiAPI.Service.ReadablePublicUserService;
 
 @RestController
-@RequestMapping("/patient")
-public class ReadablePatientController implements ReadablePatient {
+@RequestMapping("/publicUser")
+public class ReadablePublicUserController implements ReadablePublicUser {
 
-	private ReadablePatientService readablePatientService;
+	private final ReadablePublicUserService readablePatientService;
 
-	JwtService jwtService = new JwtService();
+	private final JwtService jwtService;
 
 	@Autowired
-	public ReadablePatientController(ReadablePatientService readablePatientService) {
+	public ReadablePublicUserController(ReadablePublicUserService readablePatientService, JwtService jwtService) {
 		this.readablePatientService = readablePatientService;
+		this.jwtService = jwtService;
 	}
 
-	@GetMapping("/patients")
-	@ResponseStatus(HttpStatus.OK)
+	@GetMapping("/publicUsers")
 	@Override
-	public ResponseEntity<List<Patient>> getAllPatient(@RequestHeader("Authorization") String token) {
+	public ResponseEntity<List<PublicUser>> getAllPublicUser(@RequestHeader("Authorization") String token) {
 		// TODO Auto-generated method stub
 
 		if (!jwtService.isTokenExpired(token)) {
-			return readablePatientService.getAllPatient(token);
+			return readablePatientService.getAllPublicUser(token);
 		} else {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
 		}
 	}
 
-	@GetMapping("/patient")
-	@ResponseStatus(HttpStatus.OK)
+	@GetMapping("/publicUser")
 	@Override
-	public ResponseEntity<Patient> getPatient(@RequestParam int userID, @RequestHeader("Authorization") String token) {
+	public ResponseEntity<PublicUser> getPublicUser(@RequestParam int userID,
+			@RequestHeader("Authorization") String token) {
 		// TODO Auto-generated method stub
 
 		if (!jwtService.isTokenExpired(token)) {
-			return readablePatientService.getPatient(userID, token);
+			return readablePatientService.getPublicUser(userID, token);
 		} else {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
 		}

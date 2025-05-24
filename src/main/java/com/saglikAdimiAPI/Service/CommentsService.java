@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.saglikAdimiAPI.Abstraction.CommentsActionable;
-import com.saglikAdimiAPI.Model.Chats;
 import com.saglikAdimiAPI.Model.Comments;
 import com.saglikAdimiAPI.Repository.CommentsRepository;
 

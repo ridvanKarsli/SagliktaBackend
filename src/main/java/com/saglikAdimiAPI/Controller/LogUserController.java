@@ -12,13 +12,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.saglikAdimiAPI.Abstraction.Logable;
 import com.saglikAdimiAPI.Helper.EmailService;
-import com.saglikAdimiAPI.Model.Patient;
+import com.saglikAdimiAPI.Model.PublicUser;
 import com.saglikAdimiAPI.Model.Person;
 import com.saglikAdimiAPI.Service.LogUserService;
 
 @RestController
 @RequestMapping("/logUser")
-public class LogUserController implements Logable<Patient> {
+public class LogUserController implements Logable<PublicUser> {
 
 	private final LogUserService logUserService;
 
@@ -28,7 +28,6 @@ public class LogUserController implements Logable<Patient> {
 	}
 
 	@PostMapping("/logingUser")
-	@ResponseStatus(HttpStatus.OK)
 	@Override
 	public ResponseEntity<String> login(@RequestBody Person person) {
 
@@ -36,43 +35,17 @@ public class LogUserController implements Logable<Patient> {
 	}
 
 	@PostMapping("/signupUser")
-	@ResponseStatus(HttpStatus.OK)
 	@Override
 	public ResponseEntity<String> SignUp(@RequestBody Person person) {
 		EmailService emailService = new EmailService();
 		boolean isValid = emailService.isEmailValid(person.getEmail());
 		if (isValid) {
-			emailService.sendVerificationCode(person.getEmail());			
+			emailService.sendWelcomeMail(person.getEmail());
 			return logUserService.SignUp(person);
 		} else {
 			return new ResponseEntity<>("Geçersiz e-posta adresi!", HttpStatus.BAD_REQUEST);
 		}
 
 	}
-	
-	/*
-	@PostMapping("/sendVerificationCode")
-	@ResponseStatus(HttpStatus.OK)
-	@Override
-	public ResponseEntity<String> sendVerificationCode(@RequestParam String email) {
-		// TODO Auto-generated method stub
-		return logUserService.sendVerificationCode(email);
-	}
-
-	@PostMapping("/verificationEmail")
-	@ResponseStatus(HttpStatus.OK)
-	@Override
-	public ResponseEntity<String> verificationEmail(@RequestParam String email, @RequestParam String code) {
-		// TODO Auto-generated method stub
-		return logUserService.verificationEmail(email, code);
-	}
-	
-	@Override
-	public ResponseEntity<String> refreshToken(String token) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	 */
 
 }

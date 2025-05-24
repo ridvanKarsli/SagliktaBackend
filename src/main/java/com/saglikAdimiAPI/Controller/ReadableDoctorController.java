@@ -25,15 +25,15 @@ public class ReadableDoctorController implements ReadableDoctor {
 
 	private ReadableDoctorService readableDoctorService;
 
-	JwtService jwtService = new JwtService();
+	private final JwtService jwtService;
 
 	@Autowired
-	public ReadableDoctorController(ReadableDoctorService readableDoctorService) {
+	public ReadableDoctorController(ReadableDoctorService readableDoctorService, JwtService jwtService) {
 		this.readableDoctorService = readableDoctorService;
+		this.jwtService = jwtService;
 	}
 
 	@GetMapping("/doctors")
-	@ResponseStatus(HttpStatus.OK)
 	@Override
 	public ResponseEntity<List<Doctor>> getAllDoctor(@RequestHeader("Authorization") String token) {
 		// TODO Auto-generated method stub
@@ -46,7 +46,6 @@ public class ReadableDoctorController implements ReadableDoctor {
 	}
 
 	@GetMapping("/doctor")
-	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<Doctor> getDoctor(@RequestParam int userID, @RequestHeader("Authorization") String token) {
 		// TODO Auto-generated method stub
 

@@ -12,11 +12,11 @@ import org.springframework.stereotype.Service;
 
 import com.saglikAdimiAPI.Abstraction.DiseaseActionable;
 import com.saglikAdimiAPI.Model.Disease;
-import com.saglikAdimiAPI.Model.Patient;
+import com.saglikAdimiAPI.Model.PublicUser;
 import com.saglikAdimiAPI.Repository.DiseaseRepository;
 
 @Service
-public class DiseaseService implements DiseaseActionable<Patient> {
+public class DiseaseService implements DiseaseActionable<PublicUser> {
 
 	private final DiseaseRepository diseaseRepository;
 

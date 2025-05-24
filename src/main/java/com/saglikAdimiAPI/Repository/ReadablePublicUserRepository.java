@@ -8,26 +8,32 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 
-import com.saglikAdimiAPI.Abstraction.ReadablePatient;
-import com.saglikAdimiAPI.Model.Patient;
-
-import lombok.Getter;
-import lombok.Setter;
+import com.saglikAdimiAPI.Abstraction.ReadablePublicUser;
+import com.saglikAdimiAPI.Model.PublicUser;
 
 @Repository
-public class ReadablePatientRepository implements ReadablePatient {
+public class ReadablePublicUserRepository implements ReadablePublicUser {
 
-	private static final String CONNECTION_STRING = "jdbc:postgresql://clhtb6lu92mj2.cluster-czz5s0kz4scl.eu-west-1.rds.amazonaws.com:5432/d3ee0thpk00tbe?user=ubuffdepf41jfs&password=p22f739ec6892fed407dc52ed86c1963b0d0053957d30928da2bfd0d24bff391e";
+	@Value("${spring.datasource.url}")
+	private String dbUrl;
+
+	@Value("${spring.datasource.username}")
+	private String dbUsername;
+
+	@Value("${spring.datasource.password}")
+	private String dbPassword;
+
 	private Connection conn;
 
 	@Override
-	public ResponseEntity<List<Patient>> getAllPatient(String token) {
+	public ResponseEntity<List<PublicUser>> getAllPublicUser(String token) {
 		// TODO Auto-generated method stub
-		List<Patient> doctorList = new ArrayList<>(); // Kullanıcıları tutacak liste
+		List<PublicUser> doctorList = new ArrayList<>(); // Kullanıcıları tutacak liste
 		getConnection(); // Veritabanı bağlantısını al
 
 		String query = "SELECT * FROM public.\"User\" WHERE \"role\" = 'HASTA'";
@@ -38,7 +44,7 @@ public class ReadablePatientRepository implements ReadablePatient {
 
 			// Sonuçları döngü ile okuyoruz
 			while (rs.next()) {
-				Patient patient = new Patient();
+				PublicUser patient = new PublicUser();
 				patient.setUserID(rs.getInt("userID"));
 				patient.setName(rs.getString("name").trim());
 				patient.setSurname(rs.getString("surname").trim());
@@ -66,11 +72,11 @@ public class ReadablePatientRepository implements ReadablePatient {
 	}
 
 	@Override
-	public ResponseEntity<Patient> getPatient(int userID, String token) {
+	public ResponseEntity<PublicUser> getPublicUser(int userID, String token) {
 		// TODO Auto-generated method stub
 
 		getConnection(); // Veritabanı bağlantısını a
-		Patient patient = new Patient();
+		PublicUser patient = new PublicUser();
 		String query = "SELECT * FROM public.\"User\" WHERE \"userID\" = ? AND \"role\" = 'HASTA'";
 
 		try (PreparedStatement ps = conn.prepareStatement(query)) {
@@ -88,7 +94,7 @@ public class ReadablePatientRepository implements ReadablePatient {
 					DiseaseRepository dr = new DiseaseRepository();
 					patient.setDiseases(dr.getDiseases(rs.getInt("userID"), token).getBody());
 
-				}else {
+				} else {
 					return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 				}
 				conn.close();
@@ -104,7 +110,7 @@ public class ReadablePatientRepository implements ReadablePatient {
 
 	private void getConnection() {
 		try {
-			conn = DriverManager.getConnection(CONNECTION_STRING);
+			conn = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
@@ -20,7 +21,15 @@ import com.saglikAdimiAPI.Model.Person;
 @Repository
 public class ContactInfoRespository implements ContactInfoActionable {
 
-	private static final String CONNECTION_STRING = "jdbc:postgresql://clhtb6lu92mj2.cluster-czz5s0kz4scl.eu-west-1.rds.amazonaws.com:5432/d3ee0thpk00tbe?user=ubuffdepf41jfs&password=p22f739ec6892fed407dc52ed86c1963b0d0053957d30928da2bfd0d24bff391e";
+	@Value("${spring.datasource.url}")
+	private String dbUrl;
+
+	@Value("${spring.datasource.username}")
+	private String dbUsername;
+
+	@Value("${spring.datasource.password}")
+	private String dbPassword;
+
 	private Connection conn;
 
 	@Override
@@ -109,7 +118,7 @@ public class ContactInfoRespository implements ContactInfoActionable {
 					contactInfo.setEmail(rs.getString("email").trim());
 					contactInfo.setPhoneNumber(rs.getString("phoneNumber").trim());
 
-				}else {
+				} else {
 					return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 				}
 				conn.close();
@@ -140,10 +149,10 @@ public class ContactInfoRespository implements ContactInfoActionable {
 
 			// Sonuçları döngü ile okuyoruz
 			while (rs.next()) {
-	            if (!rs.next()) {
-	                // Eğer hiçbir sonuç bulunmazsa 404 Not Found dön
-	                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-	            }
+				if (!rs.next()) {
+					// Eğer hiçbir sonuç bulunmazsa 404 Not Found dön
+					return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+				}
 				ContactInfo contact = new ContactInfo();
 				contact.setContactID(rs.getInt("contactID"));
 				contact.setEmail(rs.getString("email").trim());
@@ -198,7 +207,7 @@ public class ContactInfoRespository implements ContactInfoActionable {
 
 	private void getConnection() {
 		try {
-			conn = DriverManager.getConnection(CONNECTION_STRING);
+			conn = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

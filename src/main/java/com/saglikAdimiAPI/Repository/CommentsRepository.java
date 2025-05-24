@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
@@ -23,10 +24,16 @@ import com.saglikAdimiAPI.Model.Person;
 @Repository
 public class CommentsRepository implements CommentsActionable {
 
-	private static final String CONNECTION_STRING = "jdbc:postgresql://clhtb6lu92mj2.cluster-czz5s0kz4scl.eu-west-1.rds.amazonaws.com:5432/d3ee0thpk00tbe?user=ubuffdepf41jfs&password=p22f739ec6892fed407dc52ed86c1963b0d0053957d30928da2bfd0d24bff391e";	
+	@Value("${spring.datasource.url}")
+	private String dbUrl;
+
+	@Value("${spring.datasource.username}")
+	private String dbUsername;
+
+	@Value("${spring.datasource.password}")
+	private String dbPassword;
 
 	private Connection conn;
-	//test
 
 	@Override
 	public ResponseEntity<String> addComment(Comments comment, String token) {
@@ -104,7 +111,7 @@ public class CommentsRepository implements CommentsActionable {
 
 		String query = "SELECT * FROM public.\"Comments\" WHERE \"chatID\" = ?";
 
-		try { 
+		try {
 			PreparedStatement ps = conn.prepareStatement(query);
 
 			ps.setInt(1, chatID);
@@ -112,10 +119,6 @@ public class CommentsRepository implements CommentsActionable {
 
 			// Sonuçları döngü ile okuyoruz
 			while (rs.next()) {
-	            if (!rs.next()) {
-	                // Eğer hiçbir sonuç bulunmazsa 404 Not Found dön
-	                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-	            }
 				Comments comment = new Comments();
 				comment.setCommnetsID(rs.getInt("commnetsID"));
 				comment.setMessage(rs.getString("message").trim());
@@ -142,7 +145,7 @@ public class CommentsRepository implements CommentsActionable {
 
 	private void getConnection() {
 		try {
-			conn = DriverManager.getConnection(CONNECTION_STRING);
+			conn = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

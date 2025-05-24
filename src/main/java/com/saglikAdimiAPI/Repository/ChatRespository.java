@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
@@ -22,7 +23,15 @@ import com.saglikAdimiAPI.Model.Person;
 @Repository
 public class ChatRespository implements ChatActionable {
 
-	private static final String CONNECTION_STRING = "jdbc:postgresql://clhtb6lu92mj2.cluster-czz5s0kz4scl.eu-west-1.rds.amazonaws.com:5432/d3ee0thpk00tbe?user=ubuffdepf41jfs&password=p22f739ec6892fed407dc52ed86c1963b0d0053957d30928da2bfd0d24bff391e";
+	@Value("${spring.datasource.url}")
+	private String dbUrl;
+
+	@Value("${spring.datasource.username}")
+	private String dbUsername;
+
+	@Value("${spring.datasource.password}")
+	private String dbPassword;
+
 	private Connection conn;
 
 	@Override
@@ -37,8 +46,8 @@ public class ChatRespository implements ChatActionable {
 		PreparedStatement insert;
 
 		String query = "INSERT INTO public.\"Chats\"(\n"
-				+ " message, \"likeCount\", \"dislikeCount\", \"uploadDate\", \"userID\")\n"
-				+ "	VALUES (?, ?, ?, ?, ?);";
+				+ " message, \"likeCount\", \"dislikeCount\", \"uploadDate\", \"userID\", \"category\")\n"
+				+ "	VALUES (?, ?, ?, ?, ?, ?);";
 
 		try {
 			insert = conn.prepareStatement(query);
@@ -48,6 +57,7 @@ public class ChatRespository implements ChatActionable {
 			insert.setInt(3, chat.getDislikeCount());
 			insert.setDate(4, Date.valueOf(LocalDate.now()));
 			insert.setInt(5, person.getUserID());
+			insert.setString(6, chat.getCategory().trim());
 
 			insert.executeUpdate();
 			insert.close();
@@ -114,6 +124,7 @@ public class ChatRespository implements ChatActionable {
 				chat.setDislikeCount(rs.getInt("dislikeCount"));
 				chat.setUploadDate(rs.getDate("uploadDate").toLocalDate());
 				chat.setUserID(userID);
+				chat.setCategory(rs.getString("category").trim());
 
 				CommentsRepository cr = new CommentsRepository();
 				chat.setComments(cr.getComments(rs.getInt("chatID"), token).getBody());
@@ -154,6 +165,50 @@ public class ChatRespository implements ChatActionable {
 				chat.setDislikeCount(rs.getInt("dislikeCount"));
 				chat.setUploadDate(rs.getDate("uploadDate").toLocalDate());
 				chat.setUserID(rs.getInt("userID"));
+				chat.setCategory(rs.getString("category").trim());
+
+				CommentsRepository cr = new CommentsRepository();
+				chat.setComments(cr.getComments(rs.getInt("chatID"), token).getBody());
+
+				chatList.add(chat); // Listeye ekle
+			}
+
+			rs.close();
+			ps.close();
+			conn.close(); // Bağlantıyı kapat
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+		}
+
+		return ResponseEntity.ok(chatList);
+	}
+
+	@Override
+	public ResponseEntity<List<Chats>> getChatsWithFiltre(String token, String category) {
+		// TODO Auto-generated method stub
+		List<Chats> chatList = new ArrayList<>(); // Kullanıcıları tutacak liste
+		getConnection(); // Veritabanı bağlantısını al
+		category = category.replaceAll("[\\[\\]\"]", "").trim(); // <-- Bu satırı EKLE
+
+		String query = "SELECT * FROM public.\"Chats\" WHERE \"category\" = ?";
+
+		try {
+			PreparedStatement ps = conn.prepareStatement(query);
+			ps.setString(1, category);
+			ResultSet rs = ps.executeQuery();
+
+			// Sonuçları döngü ile okuyoruz
+			while (rs.next()) {
+				Chats chat = new Chats();
+				chat.setChatID(rs.getInt("chatID"));
+				chat.setMessage(rs.getString("message").trim());
+				chat.setLikeCount(rs.getInt("likeCount"));
+				chat.setDislikeCount(rs.getInt("dislikeCount"));
+				chat.setUploadDate(rs.getDate("uploadDate").toLocalDate());
+				chat.setUserID(rs.getInt("userID"));
+				chat.setCategory(rs.getString("category").trim());
 
 				CommentsRepository cr = new CommentsRepository();
 				chat.setComments(cr.getComments(rs.getInt("chatID"), token).getBody());
@@ -175,7 +230,7 @@ public class ChatRespository implements ChatActionable {
 
 	private void getConnection() {
 		try {
-			conn = DriverManager.getConnection(CONNECTION_STRING);
+			conn = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

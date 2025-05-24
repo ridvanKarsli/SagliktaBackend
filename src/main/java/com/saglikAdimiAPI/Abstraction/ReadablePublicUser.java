@@ -4,11 +4,11 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 
-import com.saglikAdimiAPI.Model.Patient;
+import com.saglikAdimiAPI.Model.PublicUser;
 
-public interface ReadablePatient {
+public interface ReadablePublicUser {
 
-	ResponseEntity<List<Patient>> getAllPatient(String token);
+	ResponseEntity<List<PublicUser>> getAllPublicUser(String token);
 
-	ResponseEntity<Patient> getPatient(int userID, String token);
+	ResponseEntity<PublicUser> getPublicUser(int userID, String token);
 }

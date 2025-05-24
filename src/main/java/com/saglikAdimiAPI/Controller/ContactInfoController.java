@@ -5,13 +5,14 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.saglikAdimiAPI.Abstraction.ContactInfoActionable;
@@ -25,15 +26,15 @@ public class ContactInfoController implements ContactInfoActionable {
 
 	private final ContactInfoService contactInfoService;
 
-	JwtService jwtService = new JwtService();
+	private final JwtService jwtService;
 
 	@Autowired
-	public ContactInfoController(ContactInfoService contactInfoService) {
+	public ContactInfoController(ContactInfoService contactInfoService, JwtService jwtService) {
 		this.contactInfoService = contactInfoService;
+		this.jwtService = jwtService;
 	}
 
 	@PostMapping("/addContactInfor")
-	@ResponseStatus(HttpStatus.OK)
 	@Override
 	public ResponseEntity<String> addContactInfo(@RequestBody ContactInfo contactInfo,
 			@RequestHeader("Authorization") String token) {
@@ -51,8 +52,7 @@ public class ContactInfoController implements ContactInfoActionable {
 		}
 	}
 
-	@PostMapping("/updateContactInfor")
-	@ResponseStatus(HttpStatus.OK)
+	@PutMapping("/updateContactInfor")
 	@Override
 	public ResponseEntity<String> updateContactInfo(@RequestBody ContactInfo contactInfo,
 			@RequestHeader("Authorization") String token) {
@@ -71,7 +71,6 @@ public class ContactInfoController implements ContactInfoActionable {
 	}
 
 	@GetMapping("/getContact")
-	@ResponseStatus(HttpStatus.OK)
 	@Override
 	public ResponseEntity<ContactInfo> getContect(@RequestParam int contactID,
 			@RequestHeader("Authorization") String token) {
@@ -90,7 +89,6 @@ public class ContactInfoController implements ContactInfoActionable {
 	}
 
 	@GetMapping("/getAllContact")
-	@ResponseStatus(HttpStatus.OK)
 	@Override
 	public ResponseEntity<List<ContactInfo>> getAllContect(@RequestParam int userID,
 			@RequestHeader("Authorization") String token) {
@@ -108,8 +106,7 @@ public class ContactInfoController implements ContactInfoActionable {
 		}
 	}
 
-	@PostMapping("/deleteContact")
-	@ResponseStatus(HttpStatus.OK)
+	@DeleteMapping("/deleteContact")
 	@Override
 	public ResponseEntity<String> deleteContactInfo(@RequestParam int contactID,
 			@RequestHeader("Authorization") String token) {

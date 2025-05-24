@@ -1,6 +1,5 @@
 package com.saglikAdimiAPI.Service;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -16,8 +15,8 @@ import org.springframework.web.client.RestTemplate;
 import com.saglikAdimiAPI.Abstraction.SagliktaAIActionable;
 import com.saglikAdimiAPI.Model.Chats;
 import com.saglikAdimiAPI.Model.Doctor;
-import com.saglikAdimiAPI.Model.Patient;
 import com.saglikAdimiAPI.Model.Person;
+import com.saglikAdimiAPI.Model.PublicUser;
 
 @Service
 public class SagliktaAIService implements SagliktaAIActionable {
@@ -28,12 +27,12 @@ public class SagliktaAIService implements SagliktaAIActionable {
 
 	private final ChatService chatService;
 	private final ReadableUserService readableUserService;
-	private final ReadablePatientService readablePatientService;
+	private final ReadablePublicUserService readablePatientService;
 	private final ReadableDoctorService readableDoctorService;
 
 	@Autowired
 	public SagliktaAIService(ChatService chatService, ReadableUserService readableUserService,
-			ReadablePatientService readablePatientService, ReadableDoctorService readableDoctorService) {
+			ReadablePublicUserService readablePatientService, ReadableDoctorService readableDoctorService) {
 		this.chatService = chatService;
 		this.readableUserService = readableUserService;
 		this.readablePatientService = readablePatientService;
@@ -59,7 +58,7 @@ public class SagliktaAIService implements SagliktaAIActionable {
 			if ("HASTA".equals(userRole)) {
 
 				// Hasta bilgilerini al
-				Patient patient = getPatient(person.getUserID(), token);
+				PublicUser patient = getPatient(person.getUserID(), token);
 				String diseases = patient
 						.getDiseases().stream().map(disease -> String.format("Hastalık: %s, Teşhis Tarihi: %s",
 								disease.getDiseaseName(), disease.getDateOfDiagnosis()))
@@ -172,8 +171,8 @@ public class SagliktaAIService implements SagliktaAIActionable {
 		}
 	}
 
-	public Patient getPatient(int userID, String token) {
-		return readablePatientService.getPatient(userID, token).getBody();
+	public PublicUser getPatient(int userID, String token) {
+		return readablePatientService.getPublicUser(userID, token).getBody();
 	}
 
 	public Doctor getDoctor(int userID, String token) {
