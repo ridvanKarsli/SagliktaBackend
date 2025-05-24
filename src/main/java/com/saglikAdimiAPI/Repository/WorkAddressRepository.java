@@ -216,7 +216,6 @@ public class WorkAddressRepository implements WorkAddressActionable {
 		}
 
 		return ResponseEntity.ok(address);
-
 	}
 
 	private void getConnection() {
